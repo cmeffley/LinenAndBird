@@ -3,6 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Data.SqlClient;
+using Dapper;
+using Microsoft.Extensions.Configuration;
 
 namespace LinenAndBird.DataAccess
 {
@@ -33,10 +36,24 @@ namespace LinenAndBird.DataAccess
                 Style = HatStyle.Normal
             }
         };
+        readonly string _connectionString;
+
+        //http request => IConfiguration => BirdRepository => Bird Controller
+
+        public HatRepository(IConfiguration config)
+        {
+            _connectionString = config.GetConnectionString("LinenAndBird");
+        }
 
         internal Hat GetById(Guid hatId)
         {
-           return _hats.FirstOrDefault(hat => hat.Id == hatId);
+            using var db = new SqlConnection(_connectionString);
+
+            var hat = db.QueryFirstOrDefault<Hat>("Select * From Hats Where Id = @id", new { id = hatId });
+
+            return hat;
+
+           //return _hats.FirstOrDefault(hat => hat.Id == hatId);
             
         }
 

@@ -14,9 +14,9 @@ namespace LinenAndBird.Controllers
     public class HatsController : ControllerBase
     {
         private HatRepository _repo;  //field created for this class
-        public HatsController()
+        public HatsController(HatRepository repo)
         {
-            _repo = new HatRepository(); //creating an instance so the field can be used in the class. This constructor is called first then the attributes
+            _repo = repo; 
         }
 
         [HttpGet]
