@@ -35,7 +35,7 @@ namespace LinenAndBird
             //we're going to register every repository as a transient
             services.AddTransient<BirdRepository>(); //-> create a new thing anytime someone asks for one
             services.AddTransient<OrdersRepository>();
-            services.AddTransient<HatRepository>();
+            services.AddTransient<IHatRepository,HatRepository>();
 
             services.AddControllers();
             services.AddSwaggerGen(c =>

@@ -9,7 +9,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace LinenAndBird.DataAccess
 {
-    public class HatRepository
+    public class HatRepository : IHatRepository
     {
 
         static List<Hat> _hats = new List<Hat>
@@ -45,7 +45,7 @@ namespace LinenAndBird.DataAccess
             _connectionString = config.GetConnectionString("LinenAndBird");
         }
 
-        internal Hat GetById(Guid hatId)
+        public Hat GetById(Guid hatId)
         {
             using var db = new SqlConnection(_connectionString);
 
@@ -57,15 +57,15 @@ namespace LinenAndBird.DataAccess
             
         }
 
-        internal List<Hat> GetAll()
+        public List<Hat> GetAll()
         {
             return _hats;
         }
-        internal IEnumerable<Hat> GetByStyle(HatStyle style)
+        public IEnumerable<Hat> GetByStyle(HatStyle style)
         {
             return _hats.Where(hat => hat.Style == style);
         }
-        internal void Add(Hat newHat)
+        public void Add(Hat newHat)
         {
             newHat.Id = Guid.NewGuid();
             _hats.Add(newHat);
