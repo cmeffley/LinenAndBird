@@ -3,10 +3,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Data.SqlClient;
+using Dapper;
+using Microsoft.Extensions.Configuration;
 
 namespace LinenAndBird.DataAccess
 {
-    public class HatRepository
+    public class HatRepository : IHatRepository
     {
 
         static List<Hat> _hats = new List<Hat>
@@ -33,22 +36,36 @@ namespace LinenAndBird.DataAccess
                 Style = HatStyle.Normal
             }
         };
+        readonly string _connectionString;
 
-        internal Hat GetById(Guid hatId)
+        //http request => IConfiguration => BirdRepository => Bird Controller
+
+        public HatRepository(IConfiguration config)
         {
-           return _hats.FirstOrDefault(hat => hat.Id == hatId);
+            _connectionString = config.GetConnectionString("LinenAndBird");
+        }
+
+        public Hat GetById(Guid hatId)
+        {
+            using var db = new SqlConnection(_connectionString);
+
+            var hat = db.QueryFirstOrDefault<Hat>("Select * From Hats Where Id = @id", new { id = hatId });
+
+            return hat;
+
+           //return _hats.FirstOrDefault(hat => hat.Id == hatId);
             
         }
 
-        internal List<Hat> GetAll()
+        public List<Hat> GetAll()
         {
             return _hats;
         }
-        internal IEnumerable<Hat> GetByStyle(HatStyle style)
+        public IEnumerable<Hat> GetByStyle(HatStyle style)
         {
             return _hats.Where(hat => hat.Style == style);
         }
-        internal void Add(Hat newHat)
+        public void Add(Hat newHat)
         {
             newHat.Id = Guid.NewGuid();
             _hats.Add(newHat);

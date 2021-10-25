@@ -13,10 +13,12 @@ namespace LinenAndBird.Controllers
     [ApiController] //an api controller, so it returns json or xml
     public class HatsController : ControllerBase
     {
-        private HatRepository _repo;  //field created for this class
-        public HatsController()
+        private IHatRepository _repo;  //field created for this class
+
+        //taking a dependency on an interface rather than a concrete class has advantages
+        public HatsController(IHatRepository repo)
         {
-            _repo = new HatRepository(); //creating an instance so the field can be used in the class. This constructor is called first then the attributes
+            _repo = repo; 
         }
 
         [HttpGet]
